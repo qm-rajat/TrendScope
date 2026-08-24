@@ -24,8 +24,8 @@ export interface GetXApiFetchResult {
 /**
  * Check if the server-side GETXAPI_API_KEY is configured
  */
-export function isGetXApiConfigured(): boolean {
-  const apiKey = process.env.GETXAPI_API_KEY;
+export function isGetXApiConfigured(customApiKey?: string): boolean {
+  const apiKey = customApiKey || process.env.GETXAPI_API_KEY;
   return Boolean(apiKey && apiKey.trim().length > 0 && apiKey !== 'MY_GETXAPI_API_KEY');
 }
 
@@ -34,9 +34,12 @@ export function isGetXApiConfigured(): boolean {
  */
 export async function fetchRawGetXApiTrends(
   location: LocationConfig,
-  limit: number = 50
+  limit: number = 50,
+  customApiKey?: string
 ): Promise<GetXApiFetchResult> {
-  const apiKey = process.env.GETXAPI_API_KEY;
+  const apiKey = (customApiKey && customApiKey.trim().length > 0)
+    ? customApiKey.trim()
+    : process.env.GETXAPI_API_KEY;
 
   if (!apiKey || apiKey === 'MY_GETXAPI_API_KEY' || apiKey.trim() === '') {
     // Demo Mode fallback
@@ -129,12 +132,13 @@ export async function fetchRawGetXApiTrends(
  */
 export async function getTrendsForLocation(
   locationInput: string,
-  limit: number = 50
+  limit: number = 50,
+  customApiKey?: string
 ): Promise<TrendsApiResponse> {
   const normalizedSlug = normalizeLocationSlug(locationInput);
   const location = getLocationBySlug(normalizedSlug);
 
-  const fetchResult = await fetchRawGetXApiTrends(location, limit);
+  const fetchResult = await fetchRawGetXApiTrends(location, limit, customApiKey);
 
   if (fetchResult.rateLimited) {
     return {

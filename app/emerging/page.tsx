@@ -7,6 +7,7 @@ import { ErrorState } from '@/components/ErrorState';
 import { TableSkeleton } from '@/components/LoadingSkeleton';
 import { TrendsApiResponse, LocationConfig, TrendItem } from '@/types/trends';
 import { DEFAULT_LOCATION } from '@/lib/locations';
+import { fetchTrendsData } from '@/lib/api-client';
 import { formatTweetVolume, getStatusTheme } from '@/lib/trend-utils';
 import { Flame, TrendingUp, Info, ExternalLink, Gauge } from 'lucide-react';
 
@@ -25,13 +26,7 @@ export default function EmergingTrendsPage() {
     async function loadTrends() {
       try {
         const force = refreshCounter > 0;
-        const res = await fetch(
-          `/api/trends?location=${encodeURIComponent(location.slug)}&limit=50${force ? '&force=true' : ''}`,
-          { cache: 'no-store' }
-        );
-
-        if (!res.ok) throw new Error('Failed to load velocity trends');
-        const json: TrendsApiResponse = await res.json();
+        const json = await fetchTrendsData(location.slug, 50, force);
         if (isMounted) {
           setData(json);
           setError(null);

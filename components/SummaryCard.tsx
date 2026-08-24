@@ -65,14 +65,14 @@ export function SummaryCards({
     },
     {
       id: 'card-last-updated',
-      label: 'Last Updated',
+      label: 'Last Refreshed',
       value: formatTime(updatedAt),
-      subtext: sourceLabel || 'Synced via GetXAPI',
+      subtext: sourceLabel || 'Cached Data Feed',
       icon: Clock,
       accentColor: 'text-emerald-400',
       bgColor: 'bg-emerald-500/10',
       borderColor: 'border-emerald-500/20',
-      badge: 'Live Feed',
+      badge: 'Cached Data',
     },
   ];
 

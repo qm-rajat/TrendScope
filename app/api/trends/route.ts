@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
 
     // Sanitize and normalize location
     const locationSlug = normalizeLocationSlug(rawLocation);
+    const customApiKey = request.headers.get('x-custom-api-key') || undefined;
     
     // Parse limit (clamp between 1 and 100, default 50)
     let limit = 50;
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 2. Fetch fresh trends via server-side GetXAPI module
-    const responseData = await getTrendsForLocation(locationSlug, limit);
+    const responseData = await getTrendsForLocation(locationSlug, limit, customApiKey);
 
     if (!responseData.success) {
       return NextResponse.json(

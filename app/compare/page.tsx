@@ -7,6 +7,7 @@ import { TableSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ErrorState';
 import { LocationConfig, TrendsApiResponse } from '@/types/trends';
 import { getLocationBySlug } from '@/lib/locations';
+import { fetchTrendsData } from '@/lib/api-client';
 import { compareCountryTrends, formatTweetVolume } from '@/lib/trend-utils';
 import { GitCompare, ArrowRightLeft, ExternalLink, Globe2, Sparkles } from 'lucide-react';
 
@@ -25,17 +26,11 @@ export default function CountryComparisonPage() {
 
     async function loadComparison() {
       try {
-        const [res1, res2] = await Promise.all([
-          fetch(`/api/trends?location=${encodeURIComponent(country1.slug)}&limit=50`, { cache: 'no-store' }),
-          fetch(`/api/trends?location=${encodeURIComponent(country2.slug)}&limit=50`, { cache: 'no-store' }),
+        const force = refreshCounter > 0;
+        const [json1, json2] = await Promise.all([
+          fetchTrendsData(country1.slug, 50, force),
+          fetchTrendsData(country2.slug, 50, force),
         ]);
-
-        if (!res1.ok || !res2.ok) {
-          throw new Error('Failed to load trends for both countries');
-        }
-
-        const json1: TrendsApiResponse = await res1.json();
-        const json2: TrendsApiResponse = await res2.json();
 
         if (isMounted) {
           setData1(json1);

@@ -8,6 +8,7 @@ import { TableSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ErrorState';
 import { TrendsApiResponse, LocationConfig, TrendItem } from '@/types/trends';
 import { DEFAULT_LOCATION } from '@/lib/locations';
+import { fetchTrendsData } from '@/lib/api-client';
 import { generateDemoTrendHistory } from '@/lib/demo-data';
 import { formatTweetVolume } from '@/lib/trend-utils';
 import { History, Search, ArrowUpRight, Clock } from 'lucide-react';
@@ -26,11 +27,8 @@ export default function TrendHistoryPage() {
 
     async function loadHistory() {
       try {
-        const res = await fetch(`/api/trends?location=${encodeURIComponent(location.slug)}&limit=50`, {
-          cache: 'no-store',
-        });
-        if (!res.ok) throw new Error('Failed to load trends history');
-        const json: TrendsApiResponse = await res.json();
+        const force = refreshCounter > 0;
+        const json = await fetchTrendsData(location.slug, 50, force);
         if (isMounted) {
           setData(json);
           setError(null);

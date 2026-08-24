@@ -9,6 +9,7 @@ import { SummarySkeleton, TableSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ErrorState';
 import { TrendsApiResponse, LocationConfig } from '@/types/trends';
 import { LOCATIONS, DEFAULT_LOCATION } from '@/lib/locations';
+import { fetchTrendsData } from '@/lib/api-client';
 import { Sparkles } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -26,21 +27,7 @@ export default function DashboardPage() {
     async function loadTrends() {
       try {
         const force = refreshCounter > 0;
-        const url = `/api/trends?location=${encodeURIComponent(selectedLocation.slug)}&limit=50${
-          force ? '&force=true' : ''
-        }`;
-
-        const res = await fetch(url, { cache: 'no-store' });
-
-        if (!res.ok) {
-          if (res.status === 429) {
-            throw new Error('Trend provider rate limit reached. Please try again later.');
-          }
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || `Server responded with status ${res.status}`);
-        }
-
-        const json: TrendsApiResponse = await res.json();
+        const json = await fetchTrendsData(selectedLocation.slug, 50, force);
         if (isMounted) {
           setData(json);
           setError(null);
