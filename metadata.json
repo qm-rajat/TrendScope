@@ -1,0 +1,7 @@
+{
+  "name": "TrendScope",
+  "description": "X/Twitter Trends Intelligence Dashboard with real-time location monitoring, trend velocity analytics, and historical movement tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
