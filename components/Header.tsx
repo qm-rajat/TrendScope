@@ -4,6 +4,7 @@ import React from 'react';
 import { Menu, Zap } from 'lucide-react';
 import { CountrySelector } from './CountrySelector';
 import { RefreshControl } from './RefreshControl';
+import { TrendScopeLogo } from './TrendScopeLogo';
 import { LocationConfig } from '@/types/trends';
 
 interface HeaderProps {
@@ -44,19 +45,24 @@ export function Header({
               </button>
             )}
 
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                  <span>TrendScope</span>
-                  <span className="hidden sm:inline text-xs font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    <Zap className="w-3 h-3 inline mr-1 text-cyan-400" />
-                    X Intelligence
-                  </span>
-                </h1>
+            <div className="flex items-center gap-2.5">
+              <div className="lg:hidden">
+                <TrendScopeLogo size={32} />
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">
-                Monitor trending topics and hashtags across X by location.
-              </p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span>TrendScope</span>
+                    <span className="hidden sm:inline text-xs font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <Zap className="w-3 h-3 inline mr-1 text-cyan-400" />
+                      X Intelligence
+                    </span>
+                  </h1>
+                </div>
+                <p className="text-xs text-slate-400 hidden sm:block">
+                  Monitor trending topics and hashtags across X by location.
+                </p>
+              </div>
             </div>
           </div>
 

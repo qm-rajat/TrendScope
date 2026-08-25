@@ -1,4 +1,4 @@
-export type TrendType = 'hashtag' | 'topic';
+export type TrendType = 'hashtag' | 'topic' | 'phrase';
 
 export type TrendStatus = 'EXPLODING' | 'RISING' | 'STABLE' | 'FALLING' | 'COOLING';
 

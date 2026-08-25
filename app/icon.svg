@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#0B0F19" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <!-- Vibrant Core Gradient -->
+    <linearGradient id="coreGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="50%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+
+    <!-- Accent Gradient -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#818CF8" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect width="504" height="504" x="4" y="4" rx="124" fill="none" stroke="url(#coreGrad)" stroke-width="6" stroke-opacity="0.4" />
+
+  <!-- Radar & Globe Grid Arc Rings -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#1E293B" stroke-width="3" stroke-dasharray="8 8" />
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#1E3A5F" stroke-width="3.5" stroke-opacity="0.6" />
+  <circle cx="256" cy="256" r="75" fill="none" stroke="#0284C7" stroke-width="2.5" stroke-opacity="0.5" />
+
+  <!-- Globe Latitude / Longitude Ellipses -->
+  <ellipse cx="256" cy="256" rx="180" ry="85" fill="none" stroke="#1E293B" stroke-width="2.5" stroke-opacity="0.5" transform="rotate(-25 256 256)" />
+
+  <!-- Dynamic Trending Waves / Momentum Rays (Glow Layer) -->
+  <path d="M 120 340 Q 200 320, 240 260 T 380 150" fill="none" stroke="#06B6D4" stroke-width="24" stroke-linecap="round" opacity="0.3" filter="url(#glow)" />
+  
+  <!-- Trending Vector Surge Line -->
+  <path d="M 120 340 Q 200 320, 240 260 T 380 150" fill="none" stroke="url(#coreGrad)" stroke-width="16" stroke-linecap="round" />
+
+  <!-- Upward Trend Arrow Head -->
+  <path d="M 330 150 L 380 150 L 380 200" fill="none" stroke="#38BDF8" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" filter="url(#subtleGlow)" />
+
+  <!-- Pulse Points / Trend Nodes -->
+  <circle cx="120" cy="340" r="14" fill="#1E293B" stroke="#0284C7" stroke-width="5" />
+  <circle cx="240" cy="260" r="16" fill="#0F172A" stroke="#06B6D4" stroke-width="6" filter="url(#subtleGlow)" />
+  <circle cx="380" cy="150" r="18" fill="#38BDF8" filter="url(#glow)" />
+  <circle cx="380" cy="150" r="8" fill="#FFFFFF" />
+
+  <!-- Central Spark Star (X & Compass Hybrid) -->
+  <path d="M 256 195 L 263 245 L 305 256 L 263 267 L 256 315 L 249 267 L 205 256 L 249 245 Z" fill="url(#accentGrad)" filter="url(#subtleGlow)" />
+  <circle cx="256" cy="256" r="4" fill="#FFFFFF" />
+</svg>

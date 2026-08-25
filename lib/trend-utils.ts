@@ -22,22 +22,66 @@ export function formatTweetVolume(volume: number | null | undefined): string {
 }
 
 /**
- * Clean and detect if a trend name is a hashtag or topic
+ * Clean and detect if a trend name is a hashtag, topic, or phrase
  */
 export function detectTrendType(name: string): TrendType {
   const trimmed = name.trim();
   if (trimmed.startsWith('#') || trimmed.startsWith('＃')) {
     return 'hashtag';
   }
+  // If it has multiple words separated by spaces or punctuation, it's a phrase
+  const words = trimmed.split(/\s+/).filter(Boolean);
+  if (words.length > 1) {
+    return 'phrase';
+  }
   return 'topic';
+}
+
+/**
+ * Get visual styling tokens and icons for trend types
+ */
+export function getTrendTypeTheme(type: TrendType): {
+  label: string;
+  bg: string;
+  text: string;
+  border: string;
+  badgeBg: string;
+} {
+  switch (type) {
+    case 'hashtag':
+      return {
+        label: 'Hashtag',
+        bg: 'bg-blue-500/10',
+        text: 'text-blue-400',
+        border: 'border-blue-500/20',
+        badgeBg: 'bg-blue-500/15',
+      };
+    case 'phrase':
+      return {
+        label: 'Phrase',
+        bg: 'bg-emerald-500/10',
+        text: 'text-emerald-400',
+        border: 'border-emerald-500/20',
+        badgeBg: 'bg-emerald-500/15',
+      };
+    case 'topic':
+    default:
+      return {
+        label: 'Topic',
+        bg: 'bg-purple-500/10',
+        text: 'text-purple-400',
+        border: 'border-purple-500/20',
+        badgeBg: 'bg-purple-500/15',
+      };
+  }
 }
 
 /**
  * Build external X (Twitter) search URL
  */
 export function buildXSearchUrl(name: string, query?: string): string {
-  const isHash = detectTrendType(name);
-  if (isHash) {
+  const type = detectTrendType(name);
+  if (type === 'hashtag') {
     const cleanTag = name.replace(/^[#＃]/, '');
     return `https://x.com/hashtag/${encodeURIComponent(cleanTag)}`;
   }

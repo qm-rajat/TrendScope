@@ -3,7 +3,7 @@
 import React from 'react';
 import { ExternalLink, Flame, TrendingUp, TrendingDown, ArrowDownRight, Minus, Sparkles } from 'lucide-react';
 import { TrendItem } from '@/types/trends';
-import { formatTweetVolume, getStatusTheme } from '@/lib/trend-utils';
+import { formatTweetVolume, getStatusTheme, getTrendTypeTheme } from '@/lib/trend-utils';
 
 interface TrendCardProps {
   trend: TrendItem;
@@ -12,6 +12,7 @@ interface TrendCardProps {
 
 export function TrendCard({ trend, className = '' }: TrendCardProps) {
   const statusTheme = getStatusTheme(trend.status || 'STABLE');
+  const typeTheme = getTrendTypeTheme(trend.type || 'topic');
 
   // Status icon component
   const renderStatusIcon = () => {
@@ -42,13 +43,9 @@ export function TrendCard({ trend, className = '' }: TrendCardProps) {
             #{trend.rank}
           </span>
           <span
-            className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md ${
-              trend.type === 'hashtag'
-                ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-            }`}
+            className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md border ${typeTheme.bg} ${typeTheme.text} ${typeTheme.border}`}
           >
-            {trend.type}
+            {typeTheme.label}
           </span>
           {trend.promoted && (
             <span className="text-[10px] flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">

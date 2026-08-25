@@ -6,10 +6,11 @@
  */
 
 import { RawGetXApiTrend } from './normalizer';
+import { TrendType } from '@/types/trends';
 
 const LOCATION_DEMO_TOPICS: Record<
   string,
-  Array<{ name: string; type: 'hashtag' | 'topic'; volume: number; category: string }>
+  Array<{ name: string; type: TrendType; volume: number; category: string }>
 > = {
   worldwide: [
     { name: '#WorldCup2026', type: 'hashtag', volume: 840000, category: 'Sports' },

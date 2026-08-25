@@ -15,6 +15,7 @@ import {
   Compass,
 } from 'lucide-react';
 import { ApiStatus } from './ApiStatus';
+import { TrendScopeLogo } from './TrendScopeLogo';
 
 interface SidebarProps {
   isMobileOpen?: boolean;
@@ -98,8 +99,8 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile, isDemo = true }: 
         {/* Logo and Brand Header */}
         <div className="p-5 border-b border-[#1E293B] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              <Compass className="w-5 h-5 text-white" />
+            <div className="relative group-hover:scale-105 transition-transform">
+              <TrendScopeLogo size={38} />
             </div>
             <div>
               <div className="flex items-center gap-1.5">

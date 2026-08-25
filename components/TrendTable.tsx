@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { ExternalLink, Search, Flame, TrendingUp, TrendingDown, ArrowDownRight, Minus, Sparkles, Hash, MessageSquare, ArrowUpDown } from 'lucide-react';
+import { ExternalLink, Search, Flame, TrendingUp, TrendingDown, ArrowDownRight, Minus, Sparkles, Hash, MessageSquare, Quote, ArrowUpDown, Layers, SlidersHorizontal } from 'lucide-react';
 import { TrendItem, TrendStatus, TrendType } from '@/types/trends';
-import { formatTweetVolume, getStatusTheme } from '@/lib/trend-utils';
+import { formatTweetVolume, getStatusTheme, getTrendTypeTheme } from '@/lib/trend-utils';
 import { TrendCard } from './TrendCard';
 
 interface TrendTableProps {
@@ -19,6 +19,24 @@ export function TrendTable({ trends, locationName = 'Worldwide', className = '' 
   const [sortBy, setSortBy] = useState<'rank' | 'volume' | 'velocity'>('rank');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
+  // Count items by type for badge counts
+  const counts = useMemo(() => {
+    let hashtags = 0;
+    let topics = 0;
+    let phrases = 0;
+    for (const t of trends) {
+      if (t.type === 'hashtag') hashtags++;
+      else if (t.type === 'phrase') phrases++;
+      else topics++;
+    }
+    return {
+      all: trends.length,
+      hashtag: hashtags,
+      topic: topics,
+      phrase: phrases,
+    };
+  }, [trends]);
+
   // Filter & sort trends
   const filteredTrends = useMemo(() => {
     return trends
@@ -32,8 +50,11 @@ export function TrendTable({ trends, locationName = 'Worldwide', className = '' 
         }
 
         // Type filter
-        if (typeFilter !== 'all' && trend.type !== typeFilter) {
-          return false;
+        if (typeFilter !== 'all') {
+          const actualType = trend.type || 'topic';
+          if (actualType !== typeFilter) {
+            return false;
+          }
         }
 
         // Status filter
@@ -88,10 +109,10 @@ export function TrendTable({ trends, locationName = 'Worldwide', className = '' 
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* Control Bar: Search & Filters */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl bg-[#0F172A] border border-[#1E293B]">
+      {/* Control Bar: Search & Type Filter Tabs */}
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 p-3 rounded-2xl bg-[#0F172A] border border-[#1E293B] shadow-xs">
         {/* Search Field */}
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 max-w-lg">
           <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
           <input
             id="input-trend-search"
@@ -99,80 +120,172 @@ export function TrendTable({ trends, locationName = 'Worldwide', className = '' 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`Filter ${trends.length} trends in ${locationName}...`}
-            className="w-full pl-9 pr-4 py-2 bg-[#070B14] border border-[#1E2D4A] rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full pl-9 pr-14 py-2 bg-[#070B14] border border-[#1E2D4A] rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-white"
+              className="absolute right-3 top-2 text-xs font-medium px-2 py-0.5 rounded bg-[#1E293B] text-slate-400 hover:text-white"
             >
               Clear
             </button>
           )}
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          <button
-            id="filter-type-all"
-            type="button"
-            onClick={() => setTypeFilter('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors shrink-0 cursor-pointer ${
-              typeFilter === 'all'
-                ? 'bg-blue-600 text-white'
-                : 'bg-[#141E33] hover:bg-[#1E2D4A] text-slate-300'
-            }`}
+        {/* Type Toggle Tabs & Velocity Dropdown */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Segmented Type Filter Tabs */}
+          <div
+            id="group-type-filters"
+            className="flex items-center p-1 rounded-xl bg-[#070B14] border border-[#1E2D4A] gap-1 overflow-x-auto"
           >
-            All
-          </button>
-          <button
-            id="filter-type-hashtag"
-            type="button"
-            onClick={() => setTypeFilter('hashtag')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1 transition-colors shrink-0 cursor-pointer ${
-              typeFilter === 'hashtag'
-                ? 'bg-blue-600 text-white'
-                : 'bg-[#141E33] hover:bg-[#1E2D4A] text-slate-300'
-            }`}
-          >
-            <Hash className="w-3 h-3" /> Hashtags
-          </button>
-          <button
-            id="filter-type-topic"
-            type="button"
-            onClick={() => setTypeFilter('topic')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1 transition-colors shrink-0 cursor-pointer ${
-              typeFilter === 'topic'
-                ? 'bg-blue-600 text-white'
-                : 'bg-[#141E33] hover:bg-[#1E2D4A] text-slate-300'
-            }`}
-          >
-            <MessageSquare className="w-3 h-3" /> Topics
-          </button>
+            {/* All */}
+            <button
+              id="filter-type-all"
+              type="button"
+              onClick={() => setTypeFilter('all')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                typeFilter === 'all'
+                  ? 'bg-blue-600 text-white shadow-xs font-semibold'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#141E33]'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>All</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  typeFilter === 'all' ? 'bg-blue-700/80 text-white' : 'bg-[#1E293B] text-slate-400'
+                }`}
+              >
+                {counts.all}
+              </span>
+            </button>
 
-          {/* Status Dropdown */}
-          <select
-            id="select-status-filter"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as 'all' | TrendStatus)}
-            className="px-2.5 py-1.5 rounded-xl bg-[#141E33] border border-[#1E2D4A] text-xs text-slate-300 focus:outline-hidden cursor-pointer"
-          >
-            <option value="all">All Velocity</option>
-            <option value="EXPLODING">🔥 Exploding</option>
-            <option value="RISING">📈 Rising</option>
-            <option value="STABLE">➖ Stable</option>
-            <option value="FALLING">📉 Falling</option>
-            <option value="COOLING">❄️ Cooling</option>
-          </select>
+            {/* Hashtags */}
+            <button
+              id="filter-type-hashtag"
+              type="button"
+              onClick={() => setTypeFilter('hashtag')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                typeFilter === 'hashtag'
+                  ? 'bg-blue-600 text-white shadow-xs font-semibold'
+                  : 'text-slate-400 hover:text-blue-400 hover:bg-[#141E33]'
+              }`}
+            >
+              <Hash className="w-3.5 h-3.5 text-blue-400" />
+              <span>Hashtags</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  typeFilter === 'hashtag'
+                    ? 'bg-blue-700/80 text-white'
+                    : 'bg-blue-500/10 text-blue-400'
+                }`}
+              >
+                {counts.hashtag}
+              </span>
+            </button>
+
+            {/* Topics */}
+            <button
+              id="filter-type-topic"
+              type="button"
+              onClick={() => setTypeFilter('topic')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                typeFilter === 'topic'
+                  ? 'bg-purple-600 text-white shadow-xs font-semibold'
+                  : 'text-slate-400 hover:text-purple-400 hover:bg-[#141E33]'
+              }`}
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-purple-400" />
+              <span>Topics</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  typeFilter === 'topic'
+                    ? 'bg-purple-700/80 text-white'
+                    : 'bg-purple-500/10 text-purple-400'
+                }`}
+              >
+                {counts.topic}
+              </span>
+            </button>
+
+            {/* Phrases */}
+            <button
+              id="filter-type-phrase"
+              type="button"
+              onClick={() => setTypeFilter('phrase')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                typeFilter === 'phrase'
+                  ? 'bg-emerald-600 text-white shadow-xs font-semibold'
+                  : 'text-slate-400 hover:text-emerald-400 hover:bg-[#141E33]'
+              }`}
+            >
+              <Quote className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Phrases</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  typeFilter === 'phrase'
+                    ? 'bg-emerald-700/80 text-white'
+                    : 'bg-emerald-500/10 text-emerald-400'
+                }`}
+              >
+                {counts.phrase}
+              </span>
+            </button>
+          </div>
+
+          {/* Velocity Status Filter */}
+          <div className="flex items-center gap-1.5">
+            <select
+              id="select-status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as 'all' | TrendStatus)}
+              className="px-3 py-2 rounded-xl bg-[#070B14] border border-[#1E2D4A] text-xs text-slate-300 focus:outline-hidden focus:border-blue-500 cursor-pointer"
+            >
+              <option value="all">⚡ All Velocity</option>
+              <option value="EXPLODING">🔥 Exploding</option>
+              <option value="RISING">📈 Rising</option>
+              <option value="STABLE">➖ Stable</option>
+              <option value="FALLING">📉 Falling</option>
+              <option value="COOLING">❄️ Cooling</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Results Count Banner */}
-      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
-        <span>
-          Showing <strong className="text-white">{filteredTrends.length}</strong> of{' '}
-          {trends.length} trends
-        </span>
+      {/* Results Count & Active Filter Indicator Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 px-1">
+        <div className="flex items-center gap-2">
+          <span>
+            Showing <strong className="text-white font-mono">{filteredTrends.length}</strong> of{' '}
+            <span className="font-mono">{trends.length}</span> trends
+          </span>
+          {typeFilter !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#141E33] border border-[#1E2D4A] text-[11px] text-cyan-300">
+              Type: <strong className="capitalize">{typeFilter}s</strong>
+              <button
+                onClick={() => setTypeFilter('all')}
+                className="ml-1 hover:text-white text-slate-400"
+                title="Reset type filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {statusFilter !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#141E33] border border-[#1E2D4A] text-[11px] text-amber-300">
+              Velocity: <strong className="capitalize">{statusFilter.toLowerCase()}</strong>
+              <button
+                onClick={() => setStatusFilter('all')}
+                className="ml-1 hover:text-white text-slate-400"
+                title="Reset velocity filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
+        </div>
+
         {searchQuery && (
           <span className="text-cyan-400 font-medium">Filtered by &quot;{searchQuery}&quot;</span>
         )}
@@ -220,6 +333,7 @@ export function TrendTable({ trends, locationName = 'Worldwide', className = '' 
             <tbody className="divide-y divide-[#1E293B]/60 text-sm">
               {filteredTrends.length > 0 ? (
                 filteredTrends.map((trend) => {
+                  const typeTheme = getTrendTypeTheme(trend.type || 'topic');
                   return (
                     <tr
                       key={`${trend.rank}-${trend.name}`}
@@ -272,13 +386,9 @@ export function TrendTable({ trends, locationName = 'Worldwide', className = '' 
                       {/* Type Badge */}
                       <td className="py-3.5 px-4">
                         <span
-                          className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md ${
-                            trend.type === 'hashtag'
-                              ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                              : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                          }`}
+                          className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md border ${typeTheme.bg} ${typeTheme.text} ${typeTheme.border}`}
                         >
-                          {trend.type}
+                          {typeTheme.label}
                         </span>
                       </td>
 

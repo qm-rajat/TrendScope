@@ -11,6 +11,7 @@ import { SummarySkeleton, TableSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorState } from '@/components/ErrorState';
 import { TrendsApiResponse, LocationConfig } from '@/types/trends';
 import { getLocationBySlug } from '@/lib/locations';
+import { fetchTrendsData } from '@/lib/api-client';
 import { Flame, Hash, GitCompare, History, ArrowLeft } from 'lucide-react';
 
 interface CountryClientViewProps {
@@ -45,16 +46,7 @@ export function CountryClientView({
     async function loadCountryTrends() {
       try {
         const force = refreshCounter > 0;
-        const res = await fetch(
-          `/api/trends?location=${encodeURIComponent(countrySlug)}&limit=50${force ? '&force=true' : ''}`,
-          { cache: 'no-store' }
-        );
-
-        if (!res.ok) {
-          throw new Error('Failed to retrieve trends for this country.');
-        }
-
-        const json: TrendsApiResponse = await res.json();
+        const json = await fetchTrendsData(countrySlug, 50, force);
         if (isMounted) {
           setData(json);
           setError(null);

@@ -4,6 +4,11 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'TrendScope — X Trends Intelligence Dashboard',
   description: 'Real-time trending topics and hashtags across X/Twitter by location, powered by GetXAPI with velocity analytics and historical movement tracking.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
   openGraph: {
     title: 'TrendScope — X Trends Intelligence Dashboard',
     description: 'Monitor trending topics and hashtags across X by location in real-time.',

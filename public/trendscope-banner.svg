@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="100%" height="100%">
+  <defs>
+    <!-- Dark Tech Canvas Gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070B14" />
+      <stop offset="50%" stop-color="#0B132B" />
+      <stop offset="100%" stop-color="#030712" />
+    </linearGradient>
+
+    <!-- Neon Glow & Accent Gradients -->
+    <linearGradient id="primaryGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="50%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+
+    <linearGradient id="purpleGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#818CF8" />
+    </linearGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#1E293B" stop-opacity="0.4" />
+    </linearGradient>
+
+    <!-- Glowing Filters -->
+    <filter id="neonBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes pulseOrb {
+      0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.35; }
+      50% { transform: scale(1.15) translate(-10px, 15px); opacity: 0.6; }
+    }
+    @keyframes radarSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes waveFlow {
+      0% { stroke-dashoffset: 800; }
+      100% { stroke-dashoffset: 0; }
+    }
+    @keyframes floatCard1 {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes floatCard2 {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(8px); }
+    }
+    @keyframes blinkDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .pulse-bg1 { animation: pulseOrb 8s ease-in-out infinite; transform-origin: 200px 150px; }
+    .pulse-bg2 { animation: pulseOrb 10s ease-in-out infinite reverse; transform-origin: 950px 250px; }
+    .radar-beam { animation: radarSpin 7s linear infinite; transform-origin: 1000px 210px; }
+    .wave-line { stroke-dasharray: 800; animation: waveFlow 4s ease-out infinite; }
+    .float-1 { animation: floatCard1 5s ease-in-out infinite; }
+    .float-2 { animation: floatCard2 6s ease-in-out infinite; }
+    .live-dot { animation: blinkDot 1.8s ease-in-out infinite; transform-origin: center; }
+  </style>
+
+  <!-- Background Base -->
+  <rect width="1200" height="420" fill="url(#bg)" rx="20" />
+  <rect width="1198" height="418" x="1" y="1" rx="19" fill="none" stroke="#1E293B" stroke-width="1.5" />
+
+  <!-- Ambient Glowing Orbs -->
+  <circle cx="200" cy="120" r="180" fill="#0284C7" filter="url(#softGlow)" class="pulse-bg1" />
+  <circle cx="980" cy="220" r="190" fill="#3B82F6" filter="url(#softGlow)" class="pulse-bg2" />
+  <circle cx="600" cy="350" r="140" fill="#06B6D4" filter="url(#softGlow)" opacity="0.2" />
+
+  <!-- Grid Coordinate Matrix -->
+  <g opacity="0.12" stroke="#38BDF8" stroke-width="1">
+    <line x1="0" y1="70" x2="1200" y2="70" stroke-dasharray="4 6" />
+    <line x1="0" y1="140" x2="1200" y2="140" stroke-dasharray="4 6" />
+    <line x1="0" y1="210" x2="1200" y2="210" stroke-dasharray="4 6" />
+    <line x1="0" y1="280" x2="1200" y2="280" stroke-dasharray="4 6" />
+    <line x1="0" y1="350" x2="1200" y2="350" stroke-dasharray="4 6" />
+    
+    <line x1="150" y1="0" x2="150" y2="420" stroke-dasharray="4 6" />
+    <line x1="350" y1="0" x2="350" y2="420" stroke-dasharray="4 6" />
+    <line x1="550" y1="0" x2="550" y2="420" stroke-dasharray="4 6" />
+    <line x1="750" y1="0" x2="750" y2="420" stroke-dasharray="4 6" />
+    <line x1="950" y1="0" x2="950" y2="420" stroke-dasharray="4 6" />
+    <line x1="1150" y1="0" x2="1150" y2="420" stroke-dasharray="4 6" />
+  </g>
+
+  <!-- Left Side: Brand Identity & Typography -->
+  <g transform="translate(70, 70)">
+    <!-- Live Pill Badge -->
+    <g transform="translate(0, 0)">
+      <rect width="186" height="28" rx="14" fill="#0F172A" stroke="#0284C7" stroke-width="1" stroke-opacity="0.6" />
+      <circle cx="16" cy="14" r="4.5" fill="#22C55E" class="live-dot" filter="url(#neonBlur)" />
+      <text x="30" y="18" fill="#38BDF8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" letter-spacing="1">195+ COUNTRIES LIVE</text>
+    </g>
+
+    <!-- Main Title -->
+    <text x="0" y="82" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="46" font-weight="800" letter-spacing="-1">
+      TrendScope
+    </text>
+    
+    <!-- Subtitle Glow / Tagline -->
+    <text x="0" y="118" fill="url(#primaryGlow)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="600">
+      Real-Time X/Twitter Trends &amp; Velocity Intelligence
+    </text>
+
+    <!-- Feature Description -->
+    <text x="0" y="152" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="400">
+      Multi-territory trend surveillance, hashtag telemetry, velocity radar,
+    </text>
+    <text x="0" y="174" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="400">
+      and automated streaming feeds powered by GetXAPI proxy architecture.
+    </text>
+
+    <!-- Capability Badges -->
+    <g transform="translate(0, 210)">
+      <!-- Badge 1 -->
+      <rect x="0" y="0" width="130" height="32" rx="8" fill="#1E293B" fill-opacity="0.8" stroke="#334155" stroke-width="1" />
+      <text x="14" y="20" fill="#38BDF8" font-family="sans-serif" font-size="12" font-weight="600">⚡ Velocity Radar</text>
+
+      <!-- Badge 2 -->
+      <rect x="140" y="0" width="140" height="32" rx="8" fill="#1E293B" fill-opacity="0.8" stroke="#334155" stroke-width="1" />
+      <text x="154" y="20" fill="#A78BFA" font-family="sans-serif" font-size="12" font-weight="600">🌐 Geo Comparison</text>
+
+      <!-- Badge 3 -->
+      <rect x="290" y="0" width="145" height="32" rx="8" fill="#1E293B" fill-opacity="0.8" stroke="#334155" stroke-width="1" />
+      <text x="304" y="20" fill="#34D399" font-family="sans-serif" font-size="12" font-weight="600">📊 24h Shift History</text>
+    </g>
+  </g>
+
+  <!-- Right Side: Interactive Radar & Visual Analytics Graphic -->
+  <g transform="translate(720, 30)">
+    <!-- Radar Base Grid -->
+    <g transform="translate(250, 180)">
+      <!-- Range Circles -->
+      <circle cx="0" cy="0" r="140" fill="none" stroke="#1E293B" stroke-width="1.5" stroke-dasharray="6 6" />
+      <circle cx="0" cy="0" r="100" fill="none" stroke="#1E3A5F" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="60" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-opacity="0.5" />
+      <circle cx="0" cy="0" r="25" fill="none" stroke="#06B6D4" stroke-width="1.5" stroke-opacity="0.8" />
+
+      <!-- Crosshairs -->
+      <line x1="-150" y1="0" x2="150" y2="0" stroke="#1E3A5F" stroke-width="1" />
+      <line x1="0" y1="-150" x2="0" y2="150" stroke="#1E3A5F" stroke-width="1" />
+
+      <!-- Rotating Radar Beam -->
+      <g class="radar-beam">
+        <path d="M 0 0 L 140 0 A 140 140 0 0 0 98 -98 Z" fill="url(#primaryGlow)" opacity="0.25" />
+        <line x1="0" y1="0" x2="140" y2="0" stroke="#38BDF8" stroke-width="2" filter="url(#neonBlur)" />
+      </g>
+
+      <!-- Center Pulse Point -->
+      <circle cx="0" cy="0" r="5" fill="#38BDF8" filter="url(#neonBlur)" />
+    </g>
+
+    <!-- Floating Live Card 1 (Top Left) -->
+    <g transform="translate(40, 50)" class="float-1">
+      <rect width="190" height="74" rx="12" fill="url(#cardGrad)" stroke="#0284C7" stroke-width="1" stroke-opacity="0.5" filter="url(#neonBlur)" />
+      <rect width="190" height="74" rx="12" fill="#0F172A" fill-opacity="0.9" stroke="#1E3A5F" stroke-width="1" />
+      
+      <!-- Rank & Title -->
+      <text x="14" y="24" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="700">#1 WORLDWIDE</text>
+      <text x="14" y="44" fill="#FFFFFF" font-family="sans-serif" font-size="14" font-weight="700">#WorldCup2026</text>
+      <text x="14" y="62" fill="#94A3B8" font-family="sans-serif" font-size="11">840K posts • </text>
+      <text x="78" y="62" fill="#EF4444" font-family="sans-serif" font-size="11" font-weight="700">🔥 +342%</text>
+    </g>
+
+    <!-- Floating Live Card 2 (Bottom Right) -->
+    <g transform="translate(230, 240)" class="float-2">
+      <rect width="180" height="74" rx="12" fill="url(#cardGrad)" stroke="#818CF8" stroke-width="1" stroke-opacity="0.5" filter="url(#neonBlur)" />
+      <rect width="180" height="74" rx="12" fill="#0F172A" fill-opacity="0.9" stroke="#1E293B" stroke-width="1" />
+      
+      <text x="14" y="24" fill="#A78BFA" font-family="monospace" font-size="10" font-weight="700">EXPLODING PHRASE</text>
+      <text x="14" y="44" fill="#FFFFFF" font-family="sans-serif" font-size="13" font-weight="700">Artificial General</text>
+      <text x="14" y="62" fill="#94A3B8" font-family="sans-serif" font-size="11">510K posts • </text>
+      <text x="78" y="62" fill="#10B981" font-family="sans-serif" font-size="11" font-weight="700">⚡ Velocity 9.4</text>
+    </g>
+  </g>
+</svg>
