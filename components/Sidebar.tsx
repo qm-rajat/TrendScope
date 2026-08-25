@@ -13,9 +13,11 @@ import {
   Database,
   X,
   Compass,
+  LogOut,
 } from 'lucide-react';
 import { ApiStatus } from './ApiStatus';
 import { TrendScopeLogo } from './TrendScopeLogo';
+import { clearActiveSession } from '@/lib/auth-session';
 
 interface SidebarProps {
   isMobileOpen?: boolean;
@@ -202,7 +204,17 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile, isDemo = true }: 
         </div>
 
         {/* Footer Status & Auth */}
-        <div className="p-4 border-t border-[#1E293B] bg-[#0A0F1D] space-y-2.5">
+        <div className="p-4 border-t border-[#1E293B] bg-[#0A0F1D] space-y-3">
+          <button
+            id="btn-sidebar-logout"
+            type="button"
+            onClick={() => clearActiveSession()}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer shadow-xs"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Lock & Logout (7492)</span>
+          </button>
+
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-slate-400">Data Feed</span>
             <ApiStatus isDemo={isDemo} />

@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Menu, Zap } from 'lucide-react';
+import { Menu, Zap, LogOut, Lock } from 'lucide-react';
 import { CountrySelector } from './CountrySelector';
 import { RefreshControl } from './RefreshControl';
 import { TrendScopeLogo } from './TrendScopeLogo';
 import { LocationConfig } from '@/types/trends';
+import { clearActiveSession } from '@/lib/auth-session';
 
 interface HeaderProps {
   currentLocationSlug: string;
@@ -91,6 +92,17 @@ export function Header({
             isRefreshing={isRefreshing}
             defaultIntervalSeconds={300}
           />
+
+          <button
+            id="btn-header-logout"
+            type="button"
+            onClick={() => clearActiveSession()}
+            title="Lock & Exit Panel (Requires code 7492 to re-enter)"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer shadow-xs"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
         </div>
       </div>
     </header>

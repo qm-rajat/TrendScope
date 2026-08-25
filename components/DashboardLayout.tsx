@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { LocationConfig } from '@/types/trends';
+import { PortalGate } from './PortalGate';
+import { usePortalSession } from '@/lib/auth-session';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,6 +27,20 @@ export function DashboardLayout({
   navigateOnSelect = false,
 }: DashboardLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const session = usePortalSession();
+
+  // While unauthorized for Advance Panel (7492)
+  if (session !== 'advance_7492') {
+    return (
+      <div className="min-h-screen bg-[#070B14] text-slate-100 flex flex-col justify-center selection:bg-blue-600 selection:text-white">
+        <PortalGate
+          requiredPortal="advance_7492"
+          title="Advance Intelligence Panel (7492)"
+          subtitle="This workspace is isolated. Enter code 7492 to unlock full analytics, emerging radar & comparison."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#070B14] text-slate-100 flex flex-col selection:bg-blue-600 selection:text-white">
@@ -59,7 +75,7 @@ export function DashboardLayout({
               <span>X Trends Intelligence Engine</span>
             </div>
             <div className="flex items-center gap-4 text-slate-400 text-[11px]">
-              <span>Powered by GetXAPI</span>
+              <span>Advance Workspace (Code 7492)</span>
               <span>•</span>
               <span>Server-Side Cache: 300s TTL</span>
               <span>•</span>

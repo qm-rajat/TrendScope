@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   RefreshCw,
   Play,
@@ -19,9 +20,17 @@ import {
   ShieldCheck,
   Settings,
   Key,
+  Search,
+  SlidersHorizontal,
 } from 'lucide-react';
 
-export const MASTER_ACTIVATION_CODE = '7492';
+import {
+  MASTER_ACTIVATION_CODE,
+  HASHTAG_SEARCH_CODE,
+  setActiveSession,
+} from '@/lib/auth-session';
+
+export { MASTER_ACTIVATION_CODE, HASHTAG_SEARCH_CODE };
 const ACTIVATION_STORAGE_KEY = 'trendscope_autorefresh_activated';
 const CUSTOM_KEY_STORAGE_KEY = 'trendscope_custom_api_key';
 
@@ -39,6 +48,7 @@ export function RefreshControl({
   defaultIntervalSeconds = 300, // 5 minutes default
   className = '',
 }: RefreshControlProps) {
+  const router = useRouter();
   // Auto-refresh is OFF by default when user first arrives
   const [autoRefresh, setAutoRefresh] = useState<boolean>(false);
   const [isActivated, setIsActivated] = useState<boolean>(() => {
@@ -82,7 +92,8 @@ export function RefreshControl({
   const [digits, setDigits] = useState<string[]>(['', '', '', '']);
   const [codeError, setCodeError] = useState<string | null>(null);
   const [codeSuccess, setCodeSuccess] = useState<boolean>(false);
-  const [copiedCode, setCopiedCode] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>('Activation Successful!');
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const isMounted = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -247,10 +258,29 @@ export function RefreshControl({
   };
 
   const validateCode = (inputCode: string) => {
-    // Accept master code 7492, 2026, or any 4 digit code for seamless UX
-    if (inputCode === MASTER_ACTIVATION_CODE || inputCode === '2026' || inputCode.length === 4) {
+    if (inputCode === HASHTAG_SEARCH_CODE) {
+      // 7491: Redirect to Minimalist Country Top 10 Hashtags Search
       setCodeSuccess(true);
+      setSuccessMessage('Code 7491 Verified! Opening Top 10 Hashtags Finder...');
       setCodeError(null);
+      setActiveSession('hashtags_7491');
+      try {
+        localStorage.setItem(ACTIVATION_STORAGE_KEY, 'true');
+      } catch {}
+      setTimeout(() => {
+        setShowActivationModal(false);
+        setCodeSuccess(false);
+        router.push('/hashtags');
+      }, 700);
+      return;
+    }
+
+    if (inputCode === MASTER_ACTIVATION_CODE || inputCode === '2026' || inputCode.length === 4) {
+      // 7492: Unlock Advance Intelligence Panel & Auto-Refresh
+      setCodeSuccess(true);
+      setSuccessMessage('Code 7492 Verified! Advance Intelligence Panel Unlocked');
+      setCodeError(null);
+      setActiveSession('advance_7492');
       try {
         localStorage.setItem(ACTIVATION_STORAGE_KEY, 'true');
       } catch {}
@@ -262,20 +292,20 @@ export function RefreshControl({
         setCodeSuccess(false);
       }, 700);
     } else {
-      setCodeError('Please enter a 4-digit code. Use master code: ' + MASTER_ACTIVATION_CODE);
+      setCodeError(`Please enter a valid 4-digit code (e.g. ${MASTER_ACTIVATION_CODE} or ${HASHTAG_SEARCH_CODE})`);
     }
   };
 
-  const handleQuickActivate = () => {
-    const masterDigits = MASTER_ACTIVATION_CODE.split('');
-    setDigits(masterDigits);
-    validateCode(MASTER_ACTIVATION_CODE);
+  const handleQuickActivate = (code: string) => {
+    const codeDigits = code.split('');
+    setDigits(codeDigits);
+    validateCode(code);
   };
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(MASTER_ACTIVATION_CODE);
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
   };
 
   return (
@@ -414,47 +444,93 @@ export function RefreshControl({
               </div>
               <div>
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <span>Activate Auto-Refresh</span>
+                  <span>Portal Activation Keys</span>
                   <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    VIP Pass
+                    Dual Pass
                   </span>
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Enable high-frequency background polling (1m, 5m, 30m).
+                  Select a portal mode below or enter a 4-digit code.
                 </p>
               </div>
             </div>
 
-            {/* Code Disclosure Banner */}
-            <div className="p-3.5 rounded-xl bg-[#070B14] border border-[#1E2D4A]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-                  <div>
-                    <div className="text-xs font-semibold text-slate-200">
-                      Complimentary 4-Digit Code
-                    </div>
-                    <div className="text-[11px] text-slate-400">
-                      Use code below or click Auto-Fill
-                    </div>
+            {/* Code Disclosure Banner - 2 Portals */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {/* Advance Panel Code 7492 */}
+              <div className="p-3 rounded-xl bg-[#070B14] border border-[#1E2D4A] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-200 flex items-center gap-1">
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+                      Advance Panel
+                    </span>
+                    <span className="font-mono text-sm font-bold text-cyan-300 bg-[#141E33] px-2 py-0.5 rounded border border-cyan-500/30">
+                      {MASTER_ACTIVATION_CODE}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1">
+                    Charts, velocity radar & live sync.
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-base font-bold text-cyan-300 tracking-widest bg-[#141E33] px-2.5 py-1 rounded-lg border border-cyan-500/30">
-                    {MASTER_ACTIVATION_CODE}
-                  </span>
+                <div className="mt-2 pt-2 border-t border-[#1E293B] flex items-center justify-between">
                   <button
                     type="button"
-                    onClick={handleCopyCode}
-                    title="Copy code"
-                    className="p-1.5 rounded-lg bg-[#141E33] text-slate-300 hover:text-white border border-[#1E2D4A] transition-colors cursor-pointer"
+                    onClick={() => handleCopyCode(MASTER_ACTIVATION_CODE)}
+                    className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
                   >
-                    {copiedCode ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    {copiedCode === MASTER_ACTIVATION_CODE ? (
+                      <Check className="w-3 h-3 text-emerald-400" />
                     ) : (
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-3 h-3" />
                     )}
+                    <span>Copy</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickActivate(MASTER_ACTIVATION_CODE)}
+                    className="text-[11px] text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer"
+                  >
+                    Auto-Fill 7492 →
+                  </button>
+                </div>
+              </div>
+
+              {/* Minimalist Hashtag Search Code 7491 */}
+              <div className="p-3 rounded-xl bg-[#070B14] border border-blue-500/30 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-blue-300 flex items-center gap-1">
+                      <Search className="w-3.5 h-3.5 text-blue-400" />
+                      Top 10 Hashtags
+                    </span>
+                    <span className="font-mono text-sm font-bold text-blue-300 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-500/40">
+                      {HASHTAG_SEARCH_CODE}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1">
+                    Search country & top 10 tags.
+                  </div>
+                </div>
+                <div className="mt-2 pt-2 border-t border-[#1E293B] flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(HASHTAG_SEARCH_CODE)}
+                    className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                  >
+                    {copiedCode === HASHTAG_SEARCH_CODE ? (
+                      <Check className="w-3 h-3 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                    <span>Copy</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickActivate(HASHTAG_SEARCH_CODE)}
+                    className="text-[11px] text-blue-400 hover:text-blue-300 font-semibold cursor-pointer"
+                  >
+                    Auto-Fill 7491 →
                   </button>
                 </div>
               </div>
@@ -463,7 +539,7 @@ export function RefreshControl({
             {/* 4-Box PIN Input Form */}
             <div className="space-y-3">
               <label className="block text-xs font-medium text-slate-300 text-center">
-                Enter 4-digit code to unlock
+                Enter 4-digit code (7492 for Advance / 7491 for Top 10)
               </label>
 
               <div className="flex justify-center gap-3" onPaste={handlePaste}>
@@ -493,29 +569,39 @@ export function RefreshControl({
 
               {/* Status feedback */}
               {codeSuccess && (
-                <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-400 font-semibold animate-in fade-in">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Activation Successful! Unlocking...</span>
+                <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-400 font-semibold animate-in fade-in text-center">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{successMessage}</span>
                 </div>
               )}
 
               {codeError && (
-                <div className="flex items-center justify-center gap-1.5 text-xs text-rose-400 font-medium">
+                <div className="flex items-center justify-center gap-1.5 text-xs text-rose-400 font-medium text-center">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{codeError}</span>
                 </div>
               )}
 
-              {/* Quick Fill & Action Buttons */}
-              <div className="pt-1 space-y-2">
+              {/* Dual Action Buttons */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
                 <button
-                  id="btn-quick-fill-activate"
+                  id="btn-quick-fill-7492"
                   type="button"
-                  onClick={handleQuickActivate}
-                  className="w-full py-2.5 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs shadow-cyan-500/20"
+                  onClick={() => handleQuickActivate(MASTER_ACTIVATION_CODE)}
+                  className="py-2.5 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs shadow-cyan-500/20"
                 >
-                  <Unlock className="w-4 h-4" />
-                  <span>Auto-Fill & Activate ({MASTER_ACTIVATION_CODE})</span>
+                  <Unlock className="w-3.5 h-3.5" />
+                  <span>Advance (7492)</span>
+                </button>
+
+                <button
+                  id="btn-quick-fill-7491"
+                  type="button"
+                  onClick={() => handleQuickActivate(HASHTAG_SEARCH_CODE)}
+                  className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs shadow-blue-500/20"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  <span>Top 10 (7491)</span>
                 </button>
               </div>
             </div>
