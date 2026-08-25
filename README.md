@@ -83,7 +83,6 @@ In your Vercel Project Settings under **Settings ➔ Environment Variables**:
 | Variable | Requirement | Default | Description |
 |---|---|---|---|
 | `GETXAPI_API_KEY` | Optional | `""` (Demo Mode) | Your API Key from [GetXAPI](https://getxapi.com). If empty, TrendScope defaults to live realistic Demo mode. |
-| `GEMINI_API_KEY` | Optional | `""` | Optional API Key for server-side AI-assisted summaries and trend insights. |
 
 ### Step 3: Build & Start Verification
 TrendScope will automatically build using:
