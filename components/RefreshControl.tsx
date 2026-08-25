@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import {
   RefreshCw,
@@ -82,6 +83,11 @@ export function RefreshControl({
   const [codeError, setCodeError] = useState<string | null>(null);
   const [codeSuccess, setCodeSuccess] = useState<boolean>(false);
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
   const digitInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Focus first input whenever modal opens
@@ -378,12 +384,12 @@ export function RefreshControl({
         </div>
       </div>
 
-      {/* 4-Digit Activation Code Modal with Custom API Key Option */}
-      {showActivationModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
+      {/* 4-Digit Activation Code Modal with Custom API Key Option (Portaled to document.body) */}
+      {isMounted && showActivationModal && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 min-h-screen w-screen bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
           <div
             id="activation-code-modal"
-            className="w-full max-w-md bg-[#0F172A] border border-[#1E293B] rounded-2xl shadow-2xl p-6 relative overflow-hidden space-y-4"
+            className="w-full max-w-md my-auto bg-[#0F172A] border border-[#1E293B] rounded-2xl shadow-2xl p-6 relative overflow-hidden space-y-4"
           >
             {/* Ambient Top Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-80" />
@@ -544,7 +550,8 @@ export function RefreshControl({
               <span>Intervals: 1m, 5m, 30m</span>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
